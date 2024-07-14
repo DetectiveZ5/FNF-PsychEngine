@@ -30,7 +30,8 @@ jobs:
       - name: Install Libraries
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq install -o Dpkg::Progress-Fancy="0" -o APT::Color="0" -o Dpkg::Use-Pty="0" libvlc-dev libvlccore-dev < /dev/null > /dev/null
-          haxelib setup ~/haxelibhaxelib --global install hmm
+          haxelib setup ~/haxelib
+          haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
 
@@ -69,10 +70,9 @@ jobs:
       - name: Install Libraries
         run: |
           haxelib setup C:/haxelib
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm install
         shell: cmd
 
       - name: Skip SScript setup mode
@@ -110,10 +110,9 @@ jobs:
       - name: Install Libraries
         run: |
           haxelib setup ~/haxelib
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm install
 
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
@@ -151,8 +150,9 @@ jobs:
 
       - name: Install Libraries
         run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm install
 
       - name: Configure Android
         run: |
@@ -185,8 +185,9 @@ jobs:
 
       - name: Install Libraries
         run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm install
 
       - name: Compile
         run: haxelib run lime build ios -nosign
