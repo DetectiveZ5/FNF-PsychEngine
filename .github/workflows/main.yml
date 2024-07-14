@@ -19,11 +19,13 @@ jobs:
           haxe-version: 4.3.4
       - name: Install Libraries
         run: |
-          sudo apt-get -qq install libvlc-dev libvlccore-dev
+          sudo apt-get -qq install libvlc-dev libvlccore-dev\
           haxelib setup ~/haxelib
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
       - name: Create Version Tag
@@ -52,6 +54,8 @@ jobs:
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
         shell: cmd
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
@@ -68,10 +72,7 @@ jobs:
           if-no-files-found: error
 
   buildMac:
-    runs-on: macos-${{ matrix.version }}
-    strategy:
-      matrix:
-        version: [12, 13]
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -85,6 +86,8 @@ jobs:
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
       - name: Create Version Tag
@@ -94,7 +97,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: macBuild-${{ matrix.version }}
+          name: macBuild-13
           path: export/release/macos/bin/*
           if-no-files-found: error
 
