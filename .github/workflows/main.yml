@@ -30,11 +30,9 @@ jobs:
       - name: Install Libraries
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq install -o Dpkg::Progress-Fancy="0" -o APT::Color="0" -o Dpkg::Use-Pty="0" libvlc-dev libvlccore-dev < /dev/null > /dev/null
-          haxelib setup ~/haxelib
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+          haxelib setup ~/haxelibhaxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm install
 
       # Skips SScript setup mode
       - name: Skip SScript setup mode
