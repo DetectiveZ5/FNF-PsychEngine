@@ -117,9 +117,12 @@ jobs:
           haxe-version: 4.3.4
       - name: Install Libraries
         run: |
+          haxelib setup C:/haxelib
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Configure Android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
@@ -146,9 +149,12 @@ jobs:
           haxe-version: 4.3.4
       - name: Install Libraries
         run: |
+          haxelib setup ~/haxelib
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Compile
         run: haxelib run lime build ios -nosign
       - name: Make Ipa
