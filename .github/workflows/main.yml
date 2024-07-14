@@ -1,97 +1,141 @@
 name: Build
 
+# Controls when the action will run.
 on:
+  # Triggers the workflow on push or pull request events for the main and experimental branches
   push:
     branches: [ main, experimental ]
   pull_request:
     branches: [ main, experimental ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  buildWindows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
-        with:
-          haxe-version: 4.3.4
-
-      - name: Install Libraries
-        run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-
-      - name: Compile
-        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id}}"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: windowsBuild
-          path: export/release/windows/bin/*
-          if-no-files-found: error
-
   buildLinux:
     runs-on: ubuntu-latest
+
     steps:
+      # Checks out the repository under $GITHUB_WORKSPACE so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Sets up Haxe environment
       - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
 
+      # Installs necessary libraries and dependencies
       - name: Install Libraries
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq install -o Dpkg::Progress-Fancy="0" -o APT::Color="0" -o Dpkg::Use-Pty="0" libvlc-dev libvlccore-dev < /dev/null > /dev/null
+          haxelib setup ~/haxelib
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
 
+      # Skips SScript setup mode
+      - name: Skip SScript setup mode
+        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
+
+      # Creates a version tag using the GitHub run ID
+      - name: Create Version Tag
+        run: echo "${{ github.run_id }}" > VERSION
+
+      # Compiles the project
       - name: Compile
-        run: haxelib run lime build linux --app-version="4.0.0-${{ github.run_id}}"
+        run: haxelib run lime build linux --app-version="4.0.0-${{ github.run_id }}"
 
+      # Uploads the compiled artifact
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2.2.4
         with:
           name: linuxBuild
           path: export/release/linux/bin/*
           if-no-files-found: error
 
-  buildMac:
-    runs-on: macos-${{matrix.version}}
-    strategy:
-      matrix:
-        version: [12, 13]
+  buildWindows:
+    runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
 
       - name: Install Libraries
         run: |
+          haxelib setup C:/haxelib
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+        shell: cmd
+
+      - name: Skip SScript setup mode
+        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
+        shell: cmd
+
+      - name: Create Version Tag
+        run: echo "${{ github.run_id }}" > VERSION
 
       - name: Compile
-        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id}}"
+        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id }}"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2.2.4
         with:
-          name: macOSBuild-${{matrix.version}}
+          name: windowsBuild
+          path: export/release/windows/bin/*
+          if-no-files-found: error
+
+  buildMac:
+    runs-on: macos-${{ matrix.version }}
+    strategy:
+      matrix:
+        version: [12, 13]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.4
+
+      - name: Install Libraries
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+
+      - name: Skip SScript setup mode
+        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
+
+      - name: Create Version Tag
+        run: echo "${{ github.run_id }}" > VERSION
+
+      - name: Compile
+        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id }}"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: macBuild-${{ matrix.version }}
           path: export/release/macos/bin/*
           if-no-files-found: error
 
   buildAndroid:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -103,7 +147,7 @@ jobs:
           java-version: '17'
 
       - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
 
@@ -131,12 +175,13 @@ jobs:
 
   buildiOS:
     runs-on: macos-13
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
 
