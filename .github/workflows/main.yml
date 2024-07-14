@@ -10,29 +10,45 @@ on:
 jobs:
   buildLinux:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
+        
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
-      - name: Install Libraries
+      
+      - name: Install VLC libraries
         run: |
-          sudo apt-get -qq install libvlc-dev libvlccore-dev\
-          haxelib setup ~/haxelib
+          sudo apt-get -qq install libvlc-dev libvlccore-dev
+      
+      - name: Setup haxelib
+        run: haxelib setup
+      
+      - name: Install hmm
+        run: |
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
-      - name: Skip SScript setup mode
+      
+      - name: Install hxcpp
+        run: haxelib install hxcpp > /dev/null --quiet
+      
+      - name: Compile Haxe code
+        run: haxe -cp ./src -D analyzer-optimize -main Main --interp
+      
+      - name: Echo settings
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
+      
       - name: Create Version Tag
         run: echo "${{ github.run_id }}" > VERSION
-      - name: Compile
+      
+      - name: Compile Linux build
         run: haxelib run lime build linux --app-version="4.0.0-${{ github.run_id }}"
-      - name: Upload Artifact
+      
+      - name: Upload Linux build artifact
         uses: actions/upload-artifact@v2.2.4
         with:
           name: linuxBuild
@@ -117,7 +133,6 @@ jobs:
           haxe-version: 4.3.4
       - name: Install Libraries
         run: |
-          haxelib setup C:/haxelib
           haxelib --global install hmm
           haxelib --global run hmm setup
           hmm install
