@@ -1,180 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<!-- _________________________ Application Settings _________________________ -->
+    <!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': Psych Engine" file="PsychEngine" packageName="com.shadowmario.psychengine" package="com.shadowmario.psychengine" main="Main" version="0.2.8" company="ShadowMario" />
+    <app title="Friday Night Funkin': Psych Engine" file="PsychEngine" packageName="com.shadowmario.psychengine" package="com.shadowmario.psychengine" main="Main" version="0.2.8" company="ShadowMario" />
 
-	<!--Switch Export with Unique ApplicationID and Icon-->
-	<set name="APP_ID" value="0x0100f6c013bbc000" />
+    <!--Switch Export with Unique ApplicationID and Icon-->
+    <set name="APP_ID" value="0x0100f6c013bbc000" />
 
-	<!-- NOTE TO SELF: DISABLE THIS IF ISSUES ARE FOUND -->
-	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/> <!-- stable luas PUT AFTER FIRST LINE WITH APP NAME AND ETC -->
+    <!-- NOTE TO SELF: DISABLE THIS IF ISSUES ARE FOUND -->
+    <haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
 
-	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
-		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
-	<!-- <app preloader="Preloader" resizable="true" /> -->
-	<app preloader="flixel.system.FlxPreloader" />
+    <!-- Preloader Configuration -->
+    <app preloader="flixel.system.FlxPreloader" />
 
-	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
-	<set name="SWF_VERSION" value="11.8" />
-	
-	<!-- ______________________ PSYCH ENGINE CUSTOMIZATION ______________________ -->
+    <!-- SWF Version Configuration -->
+    <set name="SWF_VERSION" value="11.8" />
 
-	<define name="MODS_ALLOWED" if="desktop" />
-	<define name="HSCRIPT_ALLOWED" if="desktop" />
-	<define name="LUA_ALLOWED" if="desktop" />
-	<define name="ACHIEVEMENTS_ALLOWED" />
-	<define name="DISCORD_ALLOWED" />
-	<define name="TRANSLATIONS_ALLOWED" />
-	
-	<define name="SHOW_LOADING_SCREEN" />
-	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE THE PSYCH LOGO FROM LOADING SCREEN -->
+    <!-- ______________________ PSYCH ENGINE CUSTOMIZATION ______________________ -->
 
-	<section if="officialBuild">
-		<define name="TITLE_SCREEN_EASTER_EGG"/>
-		<define name="BASE_GAME_FILES" />
-		<define name="VIDEOS_ALLOWED" if="windows || linux || android" unless="32bits"/> <!-- IF YOU WANT TO USE VIDEOS ON YOUR SOURCE MOD, GET THIS LINE OUTSIDE OF THE SECTION -->
-	</section>
+    <define name="MODS_ALLOWED" if="desktop || mobile || emscripten" />
+    <define name="HSCRIPT_ALLOWED" if="desktop || mobile || web" />
+    <define name="LUA_ALLOWED" if="desktop || mobile" unless="hl"/>
+    <define name="ACHIEVEMENTS_ALLOWED" />
+    <define name="DISCORD_ALLOWED" if="desktop" unless="hl"/>
+    <define name="TRANSLATIONS_ALLOWED" unless="html5"/>
+    <define name="SHOW_LOADING_SCREEN" />
+    <define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE THE PSYCH LOGO FROM LOADING SCREEN -->
+    <define name="VIDEOS_ALLOWED" if="desktop || mobile" unless="32bits || hl || rpi"/>
 
-	<!-- ____________________________ Window Settings ___________________________ -->
+    <section if="officialBuild">
+        <define name="TITLE_SCREEN_EASTER_EGG"/>
+        <define name="BASE_GAME_FILES" />
+    </section>
 
-	<!--These window settings apply to all targets-->
-	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" />
+    <!-- ____________________________ Window Settings ___________________________ -->
 
-	<!--HTML5-specific-->
-	<window if="html5" resizable="true" />
+    <!-- These window settings apply to all targets -->
+    <window width="1280" height="720" background="#000000" hardware="true" vsync="false" />
 
-	<!--Desktop-specific-->
-	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
+    <!-- HTML5-specific -->
+    <window if="html5" resizable="true" />
 
-	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
+    <!-- Desktop-specific -->
+    <window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
 
-	<!--Switch-specific-->
-	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
+    <!-- Mobile-specific -->
+    <window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" require-shaders="true" allow-high-dpi="true" />
 
-	<!-- _____________________________ Path Settings ____________________________ -->
+    <!-- Switch-specific -->
+    <window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
 
-	<set name="BUILD_DIR" value="export/debug" if="debug" />
-	<set name="BUILD_DIR" value="export/release" unless="debug" />
-	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
+    <!-- _____________________________ Path Settings ____________________________ -->
 
-	<classpath name="source" />
+    <set name="BUILD_DIR" value="export/debug" if="debug" />
+    <set name="BUILD_DIR" value="export/release" unless="debug" />
+    <set name="BUILD_DIR" value="export/32bit" if="32bits" />
+    <set name="BUILD_DIR" value="export/rpi" if="rpi" />
 
-	<!-- __________________________ Game Assets & Etc. __________________________ -->
-	
-	<!-- Turn on Crash Handler -->
-	<define name="CRASH_HANDLER" if="desktop release" />
+    <classpath name="source" />
 
-	<!-- Assets -->
-	<assets path="assets/fonts" />
-	<assets path="assets/shared"        exclude="*.ogg" if="web"/>
-	<assets path="assets/shared"        exclude="*.mp3" unless="web"/>
-	<assets path="assets/embed"         exclude="*.ogg" if="web" embed="true"/>
-	<assets path="assets/embed"         exclude="*.mp3" unless="web" embed="true"/>
-	<assets path="assets/videos"        if="VIDEOS_ALLOWED"/>
-	<assets path="assets/songs"         exclude="*.ogg" if="web"/>
-	<assets path="assets/songs"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week_assets"   rename="assets" exclude="*.ogg" if="web"/>
-	<assets path="assets/week_assets"   rename="assets" exclude="*.mp3" unless="web"/>
-	<section if="TITLE_SCREEN_EASTER_EGG">
-		<assets path="assets/secrets" rename="assets/shared" exclude="*.ogg" if="web"/>
-		<assets path="assets/secrets" rename="assets/shared" exclude="*.mp3"  unless="web"/>
-	</section>
+    <!-- __________________________ Game Assets & Etc. __________________________ -->
 
-	<section if="TRANSLATIONS_ALLOWED">
-		<assets path="assets/translations" rename="assets" exclude="*.ogg" if="web"/>
-		<assets path="assets/translations" rename="assets" exclude="*.mp3"  unless="web"/>
-	</section>
+    <define name="PRELOAD_ALL" unless="web" />
+    <define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 
-	<section if="BASE_GAME_FILES">
-		<assets path="assets/base_game" rename="assets" exclude="*.ogg" if="web"/>
-		<assets path="assets/base_game" rename="assets" exclude="*.mp3"  unless="web"/>
-	</section>
+    <!-- Assets -->
+    <assets path="assets/fonts" />
+    <assets path="assets/shared" exclude="*.ogg" if="web"/>
+    <assets path="assets/shared" exclude="*.mp3" unless="web"/>
+    <assets path="assets/embed" exclude="*.ogg" if="web" embed="true"/>
+    <assets path="assets/embed" exclude="*.mp3" unless="web" embed="true"/>
+    <assets path="assets/videos" if="VIDEOS_ALLOWED"/>
+    <assets path="assets/songs" exclude="*.ogg" if="web"/>
+    <assets path="assets/songs" exclude="*.mp3" unless="web"/>
+    <assets path="assets/week_assets" rename="assets" exclude="*.ogg" if="web"/>
+    <assets path="assets/week_assets" rename="assets" exclude="*.mp3" unless="web"/>
+    <section if="TITLE_SCREEN_EASTER_EGG">
+        <assets path="assets/secrets" rename="assets/shared" exclude="*.ogg" if="web"/>
+        <assets path="assets/secrets" rename="assets/shared" exclude="*.mp3" unless="web"/>
+    </section>
 
-	<define name="CHECK_FOR_UPDATES" if="desktop officialBuild"/>
+    <section if="TRANSLATIONS_ALLOWED">
+        <assets path="assets/translations" rename="assets" exclude="*.ogg" if="web"/>
+        <assets path="assets/translations" rename="assets" exclude="*.mp3" unless="web"/>
+    </section>
 
-	<section if="MODS_ALLOWED">
-		<assets path='example_mods' rename='mods' embed='false' type='template'/>
-	</section>
-	<assets path='art/readme.txt' rename='do NOT readme.txt' />
+    <section if="BASE_GAME_FILES">
+        <assets path="assets/base_game" rename="assets" exclude="*.ogg" if="web"/>
+        <assets path="assets/base_game" rename="assets" exclude="*.mp3" unless="web"/>
+    </section>
 
-	<!-- _______________________________ Libraries ______________________________ -->
+    <section if="NO_PRELOAD_ALL">
+        <library name="songs" preload="false" />
+        <library name="week_assets" preload="false" />
+    </section>
 
-	<haxelib name="flixel" />
-	<haxelib name="flixel-addons" />
-	<haxelib name="tjson" />
+    <define name="CHECK_FOR_UPDATES" if="officialBuild" />
 
-	<!--Psych stuff needed-->
-	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
-	<haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
-	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
-	<haxelib name="flxanimate"/>
+    <section if="MODS_ALLOWED">
+        <assets path='example_mods' rename='mods' embed='false'/>
+    </section>
+    <assets path='art/readme.txt' rename='do NOT readme.txt' unless="mobile"/>
 
-	<!-- Disable Discord IO Thread -->
-	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
-	<haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
+    <!-- _______________________________ Libraries ______________________________ -->
 
-	<!-- Enables a terminal log prompt on debug builds -->
-	<haxelib name="hxcpp-debug-server" if="debug"/>
-	<haxedef name="HXC_LIBVLC_LOGGING" if="VIDEOS_ALLOWED debug" />
-	
-	<!-- ______________________________ Haxedefines _____________________________ -->
+    <haxelib name="flixel" />
+    <haxelib name="flixel-addons" />
 
-	<!--Enable the Flixel core recording system-->
-	<!--<haxedef name="FLX_RECORD" />-->
+    <!-- Psych Engine-specific Libraries -->
+    <haxelib name="linc_luajit" if="LUA_ALLOWED"/>
+    <haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
+    <haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
+    <haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+    <haxelib name="flxanimate" unless="html5"/>
+    <haxelib name="tjson"/>
 
-	<!--Disable the right and middle mouse buttons-->
-	<!-- <haxedef name="FLX_NO_MOUSE_ADVANCED" /> -->
+    <!-- Android Specific -->
+    <haxelib name="extension-androidtools" if="android" />
 
-	<!--Disable the native cursor API on Flash-->
-	<!--<haxedef name="FLX_NO_NATIVE_CURSOR" />-->
+    <!-- Disable Discord IO Thread -->
+    <haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
+    <haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
 
-	<!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
-	<!-- <haxedef name="FLX_NO_MOUSE" if="mobile" /> -->
-	<!-- <haxedef name="FLX_NO_KEYBOARD" if="mobile" /> -->
-	<!-- <haxedef name="FLX_NO_TOUCH" if="desktop" /> -->
-	<!--<haxedef name="FLX_NO_GAMEPAD" />-->
+    <!-- Enables a terminal log prompt on debug builds -->
+    <haxelib name="hxcpp-debug-server" if="debug"/>
 
-	<!--Disable the Flixel core sound tray-->
-	<!--<haxedef name="FLX_NO_SOUND_TRAY" />-->
+    <haxedef name="openfl_dpi_aware" if="openfl_dpi_aware" />
 
-	<!--Disable the Flixel sound management code-->
-	<!--<haxedef name="FLX_NO_SOUND_SYSTEM" />-->
+    <!-- ______________________________ Haxedefines _____________________________ -->
 
-	<!--Disable the Flixel core focus lost screen-->
-	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
-	
-	<!-- Show debug traces for hxCodec -->
-	<haxedef name="HXC_DEBUG_TRACE" if="debug" />
-	
-	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-	<haxedef name="FLX_NO_DEBUG" unless="debug" />
+    <!-- Enable the Flixel core recording system -->
+    <!-- <haxedef name="FLX_RECORD" /> -->
 
-	<!--Enable this for Nape release builds for a serious peformance improvement-->
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
-	
-	<!--Used for Izzy Engine's crash handler-->
-	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
-	<haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER" />
-	<haxedef name="HXCPP_STACK_TRACE" if="CRASH_HANDLER" />
-	
-	<!--Disable deprecated warnings-->
-	<haxedef name='no-deprecation-warnings' />
+    <!-- Disable the right and middle mouse buttons -->
+    <!-- <haxedef name="FLX_NO_MOUSE_ADVANCED" /> -->
 
-	<!--Macro fixes-->
-	<haxeflag name="--macro" value="allowPackage('flash')" />
-	<haxeflag name="--macro" value="include('my.pack')" />
+    <!-- Disable the native cursor API on Flash -->
+    <!-- <haxedef name="FLX_NO_NATIVE_CURSOR" /> -->
 
-	<!-- _________________________________ Custom _______________________________ -->
+    <!-- Optimise inputs, be careful you will get null errors if you don't use conditionals in your game -->
+    <!-- <haxedef name="FLX_NO_MOUSE" if="mobile" /> -->
+    <!-- <haxedef name="FLX_NO_KEYBOARD" if="mobile" /> -->
+    <!-- <haxedef name="FLX_NO_TOUCH" if="desktop" /> -->
+    <!-- <haxedef name="FLX_NO_GAMEPAD" /> -->
 
-	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+    <!-- Disable the Flixel core sound tray -->
+    <!-- <haxedef name="FLX_NO_SOUND_TRAY" /> -->
 
-	<assets path='art/iconOG.png' rename='icon.png' if="linux" />
-	
-	<icon path="art/icon16.png" size='16'/>
-	<icon path="art/icon32.png" size='32'/>
-	<icon path="art/icon64.png" size='64'/>
-	<icon path="art/iconOG.png" />
+    <!-- Disable the Flixel sound management code -->
+    <!-- <haxedef name="FLX_NO_SOUND_SYSTEM" /> -->
+
+    <!-- Disable the Flixel core focus lost screen -->
+    <haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+
+    <!-- Show debug traces for hxCodec -->
+    <haxedef name="HXC_DEBUG_TRACE" if="debug hxCodec" />
+    <haxedef name="HXC_LIBVLC_LOGGING" if="debug hxCodec" />
+    
+    <!-- Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode! -->
+    <haxedef name="FLX_NO_DEBUG" unless="debug" />
+
+    <!-- Enable this for Nape release builds for a serious performance improvement -->
+    <haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+
+    <!-- Disable deprecated warnings -->
+    <haxedef name='no-deprecation-warnings' />
+
+    <!-- Disable inlining for HTML5 -->
+    <haxedef name='no-inline' if="html5"/>
+
+    <!-- Ensure pointer checks and stack traces for better debugging -->
+    <section if="cpp">
+        <haxedef name="HXCPP_CHECK_POINTER" />
+        <haxedef name="HXCPP_STACK_LINE" />
+        <haxedef name="HXCPP_STACK_TRACE" />
+    </section>
+
+    <!-- Enable Handle Error for desktop -->
+    <section if="desktop">
+        <haxedef name="openfl_enable_handle_error" if="${openfl &ge; 9.4.0}" />
+        <undefine name="openfl-disable-handle-error" if="debug" unless="${openfl &ge; 9.4.0}" />
+    </section>
+
+    <!-- Android specific configuration -->
+    <section if="android">
+        <meta title="Friday Night Funkin': Psych Engine" />
+
+        <!-- Splash Screen -->
+        <splashscreen src="assets/images/splash.png" />
+
+        <!-- Configuration for Android permissions -->
+        <config>
+            <permission name="INTERNET" />
+            <permission name="WRITE_EXTERNAL_STORAGE" />
+            <permission name="READ_EXTERNAL_STORAGE" />
+        </config>
+
+        <!-- Android SDK configurations -->
+        <sdk target="30" />
+        <sdk min="16" />
+    </section>
+
+    <!-- ____________________________ Platform-Specific ___________________________ -->
+
+    <!-- Specific configurations for different platforms -->
+
+    <!-- HTML5 specific -->
+    <section if="html5">
+        <haxedef name="HTML5_BUILD" />
+        <template path="templates/html5" />
+        <icon path="assets/images/icon-128.png" />
+        <meta name="og:image" content="assets/images/icon-128.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    </section>
+
+    <!-- Desktop specific -->
+    <section if="desktop">
+        <haxedef name="DESKTOP_BUILD" />
+        <icon path="assets/images/icon-256.png" />
+    </section>
+
+    <!-- iOS specific -->
+    <section if="ios">
+        <haxedef name="IOS_BUILD" />
+        <template path="templates/ios" />
+        <icon path="assets/images/icon-1024.png" />
+        <splash path="assets/images/splash.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <sdk target="14.0" />
+        <sdk min="10.0" />
+    </section>
+
+    <!-- Switch specific -->
+    <section if="switch">
+        <haxedef name="SWITCH_BUILD" />
+        <icon path="assets/images/icon-256.png" />
+    </section>
+
+    <!-- ________________________________ Shaders ________________________________ -->
+
+    <section if="shader">
+        <assets path="assets/shaders" rename="assets" embed="true" />
+        <haxelib name="openfl-gpu" />
+        <haxelib name="hxsl" />
+    </section>
+
+    <!-- _____________________________ Game-specific _____________________________ -->
+
+    <!-- Game specific configurations -->
+    <haxelib name="openfl" />
+    <haxelib name="lime" />
+    <haxelib name="tjson" />
+    <haxelib name="format" />
+    <haxelib name="hscript" if="HSCRIPT_ALLOWED"/>
+    <haxelib name="hxcpp" />
+    <haxelib name="hxCodec" />
+    <haxelib name="hxCodec-VLC" if="VIDEOS_ALLOWED"/>
+    <haxelib name="openfl-samples" if="debug" />
+
+    <!-- Miscellaneous settings -->
+    <haxelib name="hxtelemetry" if="telemetry" />
+    <haxelib name="systools" if="desktop" />
+    <haxelib name="polymod" if="MODS_ALLOWED" />
+    <haxelib name="flixel-ui" />
+    <haxelib name="flixel-templates" if="templates" />
+    <haxelib name="hscript" if="HSCRIPT_ALLOWED" />
+
+    <!-- Configuration for custom achievements -->
+    <haxedef name="ACHIEVEMENTS_CUSTOM" if="ACHIEVEMENTS_ALLOWED" />
+    <assets path="assets/achievements" rename="assets" if="ACHIEVEMENTS_CUSTOM" embed="true" />
+
+    <!-- Discord Rich Presence configuration -->
+    <section if="DISCORD_ALLOWED">
+        <assets path="assets/discord" rename="assets" embed="true" />
+        <haxelib name="hxdiscord_rpc" />
+        <haxedef name="DISCORD_RPC" />
+    </section>
+
+    <!-- _____________________________ End of File _____________________________ -->
+
 </project>
