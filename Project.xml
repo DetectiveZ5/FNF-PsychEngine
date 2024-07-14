@@ -251,7 +251,6 @@
     <haxelib name="openfl" />
     <haxelib name="lime" />
     <haxelib name="tjson" />
-    <haxelib name="format" />
     <haxelib name="hscript" if="HSCRIPT_ALLOWED"/>
     <haxelib name="hxcpp" />
     <haxelib name="hxCodec" />
