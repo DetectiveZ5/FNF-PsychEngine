@@ -2,6 +2,7 @@ package options;
 
 import objects.AttachedText;
 import objects.CheckboxThingie;
+import flixel.addons.transition.FlxTransitionableState;
 
 import options.Option.OptionType;
 
@@ -84,8 +85,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 	public function new()
 	{
+                controls.isInSubstate = true;
+
 		super();
-		
+
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0.6;
 		add(bg);
@@ -135,6 +138,9 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			updateTextFrom(optionsArray[i]);
 		}
 
+		addVirtualPad('LEFT_FULL', 'A_B_C');
+		addVirtualPadCamera(false);
+
 		changeSelection();
 		reloadCheckboxes();
 	}
@@ -152,9 +158,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		if (controls.BACK)
 		{
-			close();
 			ClientPrefs.saveSettings();
+			controls.isInSubstate = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));
+			close();
 		}
 
 		if(nextAccept <= 0)
@@ -270,7 +277,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 					clearHold();
 			}
 
-			if(controls.RESET)
+			if(controls.RESET || virtualPad.buttonC.justPressed)
 			{
 				for (i in 0...optionsArray.length)
 				{
@@ -302,6 +309,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		if(nextAccept > 0) {
 			nextAccept -= 1;
+		}
+		if (virtualPad == null){ //sometimes it dosent add the vpad, hopefully this fixes it
+		addVirtualPad('LEFT_FULL', 'A_B_C');
+		addVirtualPadCamera(false);
 		}
 		super.update(elapsed);
 	}

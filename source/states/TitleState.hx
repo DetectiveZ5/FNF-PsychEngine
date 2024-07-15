@@ -18,6 +18,9 @@ import shaders.ColorSwap;
 import states.StoryMenuState;
 import states.OutdatedState;
 import states.MainMenuState;
+#if mobile
+import mobile.states.CopyState;
+#end
 
 typedef TitleData =
 {
@@ -69,6 +72,17 @@ class TitleState extends MusicBeatState
 	override public function create():Void
 	{
 		Paths.clearStoredMemory();
+
+		#if MODS_ALLOWED
+		Mods.pushGlobalMods();
+		Mods.loadTopMod();
+		#end
+
+		curWacky = FlxG.random.getObject(getIntroTextShit());
+
+		super.create();
+
+
 		ClientPrefs.loadPrefs();
 		Language.reloadPhrases();
 
@@ -79,7 +93,7 @@ class TitleState extends MusicBeatState
 		#if CHECK_FOR_UPDATES
 		if(ClientPrefs.data.checkForUpdates && !closedState) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/ShadowMario/FNF-PsychEngine/main/gitVersion.txt");
+			var http = new haxe.Http("https://raw.githubusercontent.com/MobilePorting/FNF-PsychEngine-Mobile/main/gitVersion.txt");
 
 			http.onData = function (data:String)
 			{
@@ -96,7 +110,7 @@ class TitleState extends MusicBeatState
 				trace('error: $error');
 			}
 
-			http.request();
+			try {http.request();} catch(e:Dynamic) {trace('http error: $e');}
 		}
 		#end
 
@@ -129,6 +143,7 @@ class TitleState extends MusicBeatState
 			}
 			persistentUpdate = true;
 			persistentDraw = true;
+			MobileData.init();
 		}
 
 		if (FlxG.save.data.weekCompleted != null)
@@ -143,6 +158,7 @@ class TitleState extends MusicBeatState
 		MusicBeatState.switchState(new ChartingState());
 		#else
 		if(FlxG.save.data.flashing == null && !FlashingState.leftState) {
+			controls.isInSubstate = false; //idfk what's wrong
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new FlashingState());
@@ -336,7 +352,7 @@ class TitleState extends MusicBeatState
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER || controls.ACCEPT;
 
-		#if mobile
+		#if FLX_TOUCH
 		for (touch in FlxG.touches.list)
 		{
 			if (touch.justPressed)

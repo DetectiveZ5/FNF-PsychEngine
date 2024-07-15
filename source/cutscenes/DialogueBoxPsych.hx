@@ -162,7 +162,12 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			bgFade.alpha += 0.5 * elapsed;
 			if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-			if(Controls.instance.ACCEPT) {
+			var justTouched:Bool = false;
+			for (touch in FlxG.touches.list)
+				if (touch.justPressed)
+					justTouched = true;
+
+			if(Controls.instance.ACCEPT || justTouched) {
 				if(!daText.finishedText) {
 					daText.finishText();
 					if(skipDialogueThing != null) {
@@ -184,8 +189,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					box.animation.curAnim.reverse();
 					if(daText != null)
 					{
-						daText.kill();
 						remove(daText);
+						daText.kill();
 						daText.destroy();
 					}
 					updateBoxOffsets(box);
@@ -257,8 +262,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			}
 		} else { //Dialogue ending
 			if(box != null && box.animation.curAnim.curFrame <= 0) {
-				box.kill();
 				remove(box);
+				box.kill();
 				box.destroy();
 				box = null;
 			}
@@ -266,7 +271,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			if(bgFade != null) {
 				bgFade.alpha -= 0.5 * elapsed;
 				if(bgFade.alpha <= 0) {
-					bgFade.kill();
 					remove(bgFade);
 					bgFade.destroy();
 					bgFade = null;
@@ -293,7 +297,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					var leChar:DialogueCharacter = arrayCharacters[0];
 					if(leChar != null) {
 						arrayCharacters.remove(leChar);
-						leChar.kill();
 						remove(leChar);
 						leChar.destroy();
 					}

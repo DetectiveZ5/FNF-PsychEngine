@@ -9,6 +9,7 @@ class Prompt extends BasePrompt
 	public function new(title:String, yesFunction:Void->Void)
 	{
 		this.yesFunction = yesFunction;
+		controls.isInSubstate = true;
 		super(title, promptCreate);
 	}
 
@@ -17,6 +18,7 @@ class Prompt extends BasePrompt
 		var btnY = 390;
 		var btn:PsychUIButton = new PsychUIButton(0, btnY, 'OK', function() {
 			yesFunction();
+			controls.isInSubstate = false;
 			close();
 		});
 		btn.normalStyle.bgColor = FlxColor.RED;
@@ -84,6 +86,7 @@ class BasePrompt extends MusicBeatSubstate
 		_blockInput = Math.max(0, _blockInput - elapsed);
 		if(_blockInput <= 0 && FlxG.keys.justPressed.ESCAPE)
 		{
+			controls.isInSubstate = false;
 			close();
 			return;
 		}

@@ -90,6 +90,8 @@ class LanguageSubState extends MusicBeatSubstate
 			grpLanguages.add(text);
 		}
 		changeSelected();
+
+        addVirtualPad('LEFT_FULL', 'A_B');
 	}
 
 	var changedLanguage:Bool = false;

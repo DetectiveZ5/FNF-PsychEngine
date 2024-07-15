@@ -1,7 +1,7 @@
 package cutscenes;
 
 import haxe.Json;
-import lime.utils.Assets;
+import openfl.utils.Assets;
 
 typedef DialogueAnimArray = {
 	var anim:String;

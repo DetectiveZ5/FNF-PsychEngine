@@ -97,6 +97,8 @@ class HScript extends SScript
 		set('Countdown', backend.BaseStage.Countdown);
 		set('PlayState', PlayState);
 		set('Paths', Paths);
+		set('SUtil', SUtil);
+		set('MobileControls', mobile.objects.MobileControls);
 		set('Conductor', Conductor);
 		set('ClientPrefs', ClientPrefs);
 		#if ACHIEVEMENTS_ALLOWED
@@ -304,6 +306,48 @@ class HScript extends SScript
 			set('addBehindBF', PlayState.instance.addBehindBF);
 			setSpecialObject(PlayState.instance, false, PlayState.instance.instancesExclude);
 		}
+        #if LUA_ALLOWED
+		set("addVirtualPad", (DPadMode:String, ActionMode:String) -> {
+			PlayState.instance.makeLuaVirtualPad(DPadMode, ActionMode);
+			PlayState.instance.addLuaVirtualPad();
+		  });
+  
+		set("removeVirtualPad", () -> {
+			PlayState.instance.removeLuaVirtualPad();
+		});
+  
+		set("addVirtualPadCamera", () -> {
+			if(PlayState.instance.luaVirtualPad == null){
+				FunkinLua.luaTrace('addVirtualPadCamera: VPAD does not exist.');
+				return;
+			}
+			PlayState.instance.addLuaVirtualPadCamera();
+		});
+  
+		set("virtualPadJustPressed", function(button:Dynamic):Bool {
+			if(PlayState.instance.luaVirtualPad == null){
+			  //FunkinLua.luaTrace('virtualPadJustPressed: VPAD does not exist.');
+			  return false;
+			}
+		  return PlayState.instance.luaVirtualPadJustPressed(button);
+		});
+  
+		set("virtualPadPressed", function(button:Dynamic):Bool {
+			if(PlayState.instance.luaVirtualPad == null){
+				//FunkinLua.luaTrace('virtualPadPressed: VPAD does not exist.');
+				return false;
+			}
+			return PlayState.instance.luaVirtualPadPressed(button);
+		});
+  
+		set("virtualPadJustReleased", function(button:Dynamic):Bool {
+			if(PlayState.instance.luaVirtualPad == null){
+				//FunkinLua.luaTrace('virtualPadJustReleased: VPAD does not exist.');
+				return false;
+			}
+			return PlayState.instance.luaVirtualPadJustReleased(button);
+		});
+                #end
 
 		if(varsToBring != null) {
 			for (key in Reflect.fields(varsToBring)) {

@@ -4,7 +4,7 @@ import flixel.addons.effects.FlxTrail;
 import states.stages.objects.*;
 import substates.GameOverSubstate;
 import cutscenes.DialogueBox;
-import openfl.utils.Assets as OpenFlAssets;
+import openfl.utils.Assets;
 
 class SchoolEvil extends BaseStage
 {
@@ -88,7 +88,7 @@ class SchoolEvil extends BaseStage
 		#if MODS_ALLOWED
 		if (!FileSystem.exists(file))
 		#else
-		if (!OpenFlAssets.exists(file))
+		if (!openfl.Assets.exists(file))
 		#end
 		{
 			file = Paths.txt('$songName/${songName}Dialogue');
@@ -97,7 +97,7 @@ class SchoolEvil extends BaseStage
 		#if MODS_ALLOWED
 		if (!FileSystem.exists(file))
 		#else
-		if (!OpenFlAssets.exists(file))
+		if (!openfl.Assets.exists(file))
 		#end
 		{
 			startCountdown();

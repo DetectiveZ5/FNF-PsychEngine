@@ -118,16 +118,16 @@
     <!-- Android Specific -->
     <haxelib name="extension-androidtools" if="android" />
 
-    <!-- Disable Discord IO Thread -->
-    <haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
-    <haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
-
     <!-- Enables a terminal log prompt on debug builds -->
     <haxelib name="hxcpp-debug-server" if="debug"/>
 
     <haxedef name="openfl_dpi_aware" if="openfl_dpi_aware" />
 
     <!-- ______________________________ Haxedefines _____________________________ -->
+
+    <!-- Disable Discord IO Thread -->
+    <haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
+    <haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
 
     <!-- Enable the Flixel core recording system -->
     <!-- <haxedef name="FLX_RECORD" /> -->
@@ -209,22 +209,22 @@
     <section if="html5">
         <haxedef name="HTML5_BUILD" />
         <template path="templates/html5" />
-        <icon path="assets/images/icon-128.png" />
-        <meta name="og:image" content="assets/images/icon-128.png" />
+        <icon path="art/iconOG.png" />
+        <meta name="og:image" content="art/iconOG.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     </section>
 
     <!-- Desktop specific -->
     <section if="desktop">
         <haxedef name="DESKTOP_BUILD" />
-        <icon path="assets/images/icon-256.png" />
+        <icon path="art/iconOG.png" />
     </section>
 
     <!-- iOS specific -->
     <section if="ios">
         <haxedef name="IOS_BUILD" />
         <template path="templates/ios" />
-        <icon path="assets/images/icon-1024.png" />
+        <icon path="art/iconOG.png" />
         <splash path="assets/images/splash.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <sdk target="14.0" />
@@ -234,48 +234,9 @@
     <!-- Switch specific -->
     <section if="switch">
         <haxedef name="SWITCH_BUILD" />
-        <icon path="assets/images/icon-256.png" />
+        <icon path="art/iconOG.png" />
     </section>
-
-    <!-- ________________________________ Shaders ________________________________ -->
-
-    <section if="shader">
-        <assets path="assets/shaders" rename="assets" embed="true" />
-        <haxelib name="openfl-gpu" />
-        <haxelib name="hxsl" />
-    </section>
-
-    <!-- _____________________________ Game-specific _____________________________ -->
-
-    <!-- Game specific configurations -->
-    <haxelib name="openfl" />
-    <haxelib name="lime" />
-    <haxelib name="tjson" />
-    <haxelib name="hscript" if="HSCRIPT_ALLOWED"/>
-    <haxelib name="hxcpp" />
-    <haxelib name="hxCodec" />
-    <haxelib name="hxCodec-VLC" if="VIDEOS_ALLOWED"/>
-    <haxelib name="openfl-samples" if="debug" />
-
-    <!-- Miscellaneous settings -->
-    <haxelib name="hxtelemetry" if="telemetry" />
-    <haxelib name="systools" if="desktop" />
-    <haxelib name="polymod" if="MODS_ALLOWED" />
-    <haxelib name="flixel-ui" />
-    <haxelib name="flixel-templates" if="templates" />
-    <haxelib name="hscript" if="HSCRIPT_ALLOWED" />
-
-    <!-- Configuration for custom achievements -->
-    <haxedef name="ACHIEVEMENTS_CUSTOM" if="ACHIEVEMENTS_ALLOWED" />
-    <assets path="assets/achievements" rename="assets" if="ACHIEVEMENTS_CUSTOM" embed="true" />
-
-    <!-- Discord Rich Presence configuration -->
-    <section if="DISCORD_ALLOWED">
-        <assets path="assets/discord" rename="assets" embed="true" />
-        <haxelib name="hxdiscord_rpc" />
-        <haxedef name="DISCORD_RPC" />
-    </section>
-
+	
     <!-- _____________________________ End of File _____________________________ -->
 
 </project>

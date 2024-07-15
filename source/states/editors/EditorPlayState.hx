@@ -3,11 +3,9 @@ package states.editors;
 import backend.Song;
 import backend.Section;
 import backend.Rating;
-
 import objects.Note;
 import objects.NoteSplash;
 import objects.StrumNote;
-
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.animation.FlxAnimationController;
@@ -102,7 +100,7 @@ class EditorPlayState extends MusicBeatSubstate
 		/**** NOTES ****/
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
-		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
+		grpNoteSplashes = new FlxTypedGroup<NoteSplash>(8);
 		add(grpNoteSplashes);
 		
 		var splash:NoteSplash = new NoteSplash(100, 100);
@@ -129,7 +127,13 @@ class EditorPlayState extends MusicBeatSubstate
 		dataTxt.borderSize = 1.25;
 		add(dataTxt);
 
-		var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press ESC to Go Back to Chart Editor', 16);
+        var daButton:String;
+	if (controls.mobileC)
+		daButton = #if android "BACK" #else "X" #end;
+        else
+		daButton = "ESC";
+
+    	var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press ' + daButton + ' to Go Back to Chart Editor', 16);
 		tipText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tipText.borderSize = 2;
 		tipText.scrollFactor.set();
@@ -148,6 +152,14 @@ class EditorPlayState extends MusicBeatSubstate
 		#end
 		updateScore();
 
+		#if !android
+		addVirtualPad('NONE', 'P');
+		addVirtualPadCamera(false);
+		#end
+
+		addMobileControls(false);
+		mobileControls.visible = true;
+
 		super.create();
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
@@ -155,8 +167,9 @@ class EditorPlayState extends MusicBeatSubstate
 
 	override function update(elapsed:Float)
 	{
-		if(controls.BACK || FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.F12)
+		if(#if android FlxG.android.justReleased.BACK #else virtualPad.buttonP.justPressed #end || controls.BACK || FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.F12)
 		{
+			mobileControls.visible = false;
 			endSong();
 			super.update(elapsed);
 			return;
@@ -550,7 +563,7 @@ class EditorPlayState extends MusicBeatSubstate
 		{
 			while (lastScore.length > 0)
 			{
-				lastScore[0].kill();
+				lastScore[0].destroy();
 				lastScore.remove(lastScore[0]);
 			}
 		}
@@ -844,7 +857,6 @@ class EditorPlayState extends MusicBeatSubstate
 	}
 
 	public function invalidateNote(note:Note):Void {
-		note.kill();
 		notes.remove(note, true);
 		note.destroy();
 	}

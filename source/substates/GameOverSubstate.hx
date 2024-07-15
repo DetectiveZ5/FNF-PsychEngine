@@ -1,7 +1,7 @@
 package substates;
 
 import backend.WeekData;
-
+import lime.ui.Haptic;
 import objects.Character;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -47,6 +47,9 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		instance = this;
 
+		if (ClientPrefs.data.gameOverVibration)
+			Haptic.vibrate(0, 500);
+
 		Conductor.songPosition = 0;
 
 		boyfriend = new Character(PlayState.instance.boyfriend.getScreenPosition().x, PlayState.instance.boyfriend.getScreenPosition().y, characterName, true);
@@ -61,12 +64,16 @@ class GameOverSubstate extends MusicBeatSubstate
 		boyfriend.playAnim('firstDeath');
 
 		camFollow = new FlxObject(0, 0, 1, 1);
-		camFollow.setPosition(boyfriend.getGraphicMidpoint().x + boyfriend.cameraPosition[0], boyfriend.getGraphicMidpoint().y + boyfriend.cameraPosition[1]);
-		FlxG.camera.focusOn(new FlxPoint(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxG.camera.scroll.y + (FlxG.camera.height / 2)));
+
+		camFollow.setPosition(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
+		FlxG.camera.focusOn(FlxPoint.weak(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxG.camera.scroll.y + (FlxG.camera.height / 2)));
 		add(camFollow);
 		
 		PlayState.instance.setOnScripts('inGameOver', true);
 		PlayState.instance.callOnScripts('onGameOverStart', []);
+
+		addVirtualPad('NONE', 'A_B');
+		addVirtualPadCamera(false);
 
 		super.create();
 	}
@@ -80,6 +87,7 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		if (controls.ACCEPT)
 		{
+			
 			endBullshit();
 		}
 
@@ -167,6 +175,7 @@ class GameOverSubstate extends MusicBeatSubstate
 				});
 			});
 			PlayState.instance.callOnScripts('onGameOverConfirm', [true]);
+			
 		}
 	}
 

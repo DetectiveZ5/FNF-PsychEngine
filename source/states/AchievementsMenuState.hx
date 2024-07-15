@@ -3,12 +3,12 @@ package states;
 import flixel.FlxObject;
 import flixel.util.FlxSort;
 import objects.Bar;
+import flixel.addons.transition.FlxTransitionableState;
 
 #if ACHIEVEMENTS_ALLOWED
 class AchievementsMenuState extends MusicBeatState
 {
 	public var curSelected:Int = 0;
-
 	public var options:Array<Dynamic> = [];
 	public var grpOptions:FlxSpriteGroup;
 	public var nameText:FlxText;
@@ -121,10 +121,19 @@ class AchievementsMenuState extends MusicBeatState
 		add(nameText);
 		
 		_changeSelection();
+
+		addVirtualPad('LEFT_FULL', 'B_C');
+
 		super.create();
 		
 		FlxG.camera.follow(camFollow, null, 0.15);
 		FlxG.camera.scroll.y = -FlxG.height;
+	}
+
+	override function closeSubState() {
+		super.closeSubState();
+                removeVirtualPad();
+		addVirtualPad('LEFT_FULL', 'B_C');
 	}
 
 	function makeAchievement(achievement:String, data:Achievement, unlocked:Bool, mod:String = null)
@@ -197,8 +206,9 @@ class AchievementsMenuState extends MusicBeatState
 				}
 			}
 			
-			if(controls.RESET && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
+			if(MusicBeatState.instance.virtualPad.buttonC.justPressed || controls.RESET && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
 			{
+				removeVirtualPad();
 				openSubState(new ResetAchievementSubstate());
 			}
 		}
@@ -258,6 +268,8 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 
 	public function new()
 	{
+                controls.isInSubstate = true;
+
 		super();
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -290,6 +302,8 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 		noText.scrollFactor.set();
 		add(noText);
 		updateOptions();
+
+		addVirtualPad('LEFT_RIGHT', 'A');
 	}
 
 	override function update(elapsed:Float)
@@ -297,6 +311,7 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 		if(controls.BACK)
 		{
 			close();
+            controls.isInSubstate = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			return;
 		}
@@ -337,6 +352,7 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 			}
+			controls.isInSubstate = false;
 			close();
 			return;
 		}

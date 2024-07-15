@@ -44,4 +44,9 @@ class AttachedSprite extends FlxSprite
 				visible = sprTracker.visible;
 		}
 	}
+
+	override function destroy(){
+		sprTracker = FlxDestroyUtil.destroy(sprTracker);
+		super.destroy();
+	}
 }

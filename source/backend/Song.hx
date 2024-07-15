@@ -1,7 +1,7 @@
 package backend;
 
 import haxe.Json;
-import lime.utils.Assets;
+import openfl.utils.Assets;
 
 import objects.Note;
 import backend.Section;
@@ -115,9 +115,9 @@ class Song
 	{
 		if(folder == null) folder = jsonInput;
 		PlayState.SONG = getChart(jsonInput, folder);
+		StageData.loadDirectory(PlayState.SONG);
 		loadedSongName = folder;
 		chartPath = _lastPath.replace('/', '\\');
-		StageData.loadDirectory(PlayState.SONG);
 		return PlayState.SONG;
 	}
 
@@ -138,7 +138,7 @@ class Song
 		#end
 			rawData = Assets.getText(_lastPath);
 
-		return rawData != null ? parseJSON(rawData, jsonInput) : null;
+		return parseJSON(rawData, jsonInput);
 	}
 
 	public static function parseJSON(rawData:String, ?nameForError:String = null, ?convertTo:String = 'psych_v1'):SwagSong
