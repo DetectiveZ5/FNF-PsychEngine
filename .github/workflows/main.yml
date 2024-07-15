@@ -26,15 +26,26 @@ jobs:
       
       - name: Setup haxelib
         run: haxelib setup ~/haxelib
-      
-      - name: Install hmm
-        run: |
-          haxelib --global install hmm
-          haxelib --global run hmm setup
-          hmm install
-      
-      - name: Install hxcpp
-        run: haxelib install hxcpp > /dev/null --quiet
+
+      - name: Install Libraries
+        run:  | 
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
+          haxelib install hxcpp
+          haxelib install hxcpp-debug-server
+          haxelib install SScript
+          haxelib install hxCodec
+          haxelib install tjson
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
+          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
+          haxelib install hxcpp > /dev/null --quiet
       
       - name: Compile Haxe code
         run: haxe -cp ./src -D analyzer-optimize -main Main --interp
@@ -67,9 +78,24 @@ jobs:
       - name: Install Libraries
         run: |
           haxelib setup C:/haxelib
-          haxelib --global install hmm
-          haxelib --global run hmm setup
-          hmm install
+          echo Installing dependencies. 
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
+          haxelib install hxcpp
+          haxelib install hxcpp-debug-server
+          haxelib install SScript
+          haxelib install hxCodec
+          haxelib install tjson
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
+          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
+          echo Finished!
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
         shell: cmd
@@ -101,10 +127,23 @@ jobs:
       
       - name: Install Libraries
         run: |
-          haxelib setup ~/haxelib
-          haxelib --global install hmm
-          haxelib --global run hmm setup
-          hmm install
+          haxelib setup ~/haxelib 
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
+          haxelib install hxcpp
+          haxelib install hxcpp-debug-server
+          haxelib install SScript
+          haxelib install hxCodec
+          haxelib install tjson
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
+          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
       
@@ -139,10 +178,23 @@ jobs:
         with:
           haxe-version: 4.3.4
       - name: Install Libraries
-        run: |
-          haxelib --global install hmm
-          haxelib --global run hmm setup
-          hmm install
+        run: | 
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
+          haxelib install hxcpp
+          haxelib install hxcpp-debug-server
+          haxelib install SScript
+          haxelib install hxCodec
+          haxelib install tjson
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
+          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Configure Android
@@ -171,10 +223,23 @@ jobs:
           haxe-version: 4.3.4
       - name: Install Libraries
         run: |
-          haxelib setup ~/haxelib
-          haxelib --global install hmm
-          haxelib --global run hmm setup
-          hmm install
+          haxelib setup ~/haxelib 
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
+          haxelib install hxcpp
+          haxelib install hxcpp-debug-server
+          haxelib install SScript
+          haxelib install hxCodec
+          haxelib install tjson
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
+          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
+          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Compile
