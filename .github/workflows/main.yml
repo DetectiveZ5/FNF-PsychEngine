@@ -1,101 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
 name: Build
 
+
+# Controls when the action will run.
 on:
+  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ main, experimental ]
   pull_request:
     branches: [ main, experimental ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This workflow contains a single job called "build"
   buildLinux:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.4
-      
-      - name: Install VLC libraries
-        run: |
-          sudo apt-get -qq install libvlc-dev libvlccore-dev
-      
-      - name: Setup haxelib
-        run: haxelib setup ~/haxelib
 
-      - name: Install Libraries
-        run:  | 
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-tools
-          haxelib install hxcpp
-          haxelib install hxcpp-debug-server
-          haxelib install SScript
-          haxelib install hxCodec
-          haxelib install tjson
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: latest
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
+        run: |
+          sudo apt-get install libvlc-dev
+          sudo apt-get install libvlccore-dev
+          haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null --quiet
-      
-      - name: Compile Haxe code
-        run: haxe -cp ./src -D analyzer-optimize -main Main --interp
-      
-      - name: Echo settings
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+      - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
-      
       - name: Create Version Tag
-        run: echo "${{ github.run_id }}" > VERSION
-      
-      - name: Compile Linux build
-        run: haxelib run lime build linux --app-version="4.0.0-${{ github.run_id }}"
-      
-      - name: Upload Linux build artifact
+        run: echo "${{github.run_id}}" > VERSION
+      - name: Compile
+        run: |
+          haxelib fixrepo
+          haxelib run lime build Project.xml linux --app-version="4.0.0-${{ github.run_id}}"
+      - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
           name: linuxBuild
-          path: export/release/linux/bin/*
-          if-no-files-found: error
-
+          path: 'export/release/linux/bin'
   buildWindows:
     runs-on: windows-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2.3.0
+
+      - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
-      - name: Install Libraries
+          haxe-version: latest
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
         run: |
           haxelib setup C:/haxelib
-          echo Installing dependencies. 
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-tools
-          haxelib install hxcpp
-          haxelib install hxcpp-debug-server
-          haxelib install SScript
-          haxelib install hxCodec
-          haxelib install tjson
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
-          echo Finished!
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
         shell: cmd
@@ -103,110 +71,76 @@ jobs:
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
         shell: cmd
       - name: Create Version Tag
-        run: echo "${{ github.run_id }}" > VERSION
+        run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id }}"
-      - name: Upload Artifact
+        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id}}"
+      - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
           name: windowsBuild
-          path: export/release/windows/bin/*
-          if-no-files-found: error
-
+          path: export/release/windows/bin
   buildMac:
-    runs-on: macos-13
-    
+    runs-on: macos-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
-      
-      - name: Install Libraries
+          haxe-version: 4.2.5
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
         run: |
-          haxelib setup ~/haxelib 
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-tools
-          haxelib install hxcpp
-          haxelib install hxcpp-debug-server
-          haxelib install SScript
-          haxelib install hxCodec
-          haxelib install tjson
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
+          haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
-      
-      - name: Echo settings
+      - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
-      
       - name: Create Version Tag
-        run: echo "${{ github.run_id }}" > VERSION
-      
-      - name: Compile macOS build
-        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id }}"
-      
-      - name: Upload macOS build artifact
+        run: echo "${{github.run_id}}" > VERSION
+      - name: Compile
+        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id}}"
+      - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: macBuild-13
-          path: export/release/macos/bin/*
-          if-no-files-found: error
+          name: macBuild
+          path: export/release/macos/bin
 
   buildAndroid:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
+
       - name: Setup Java JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@main
         with:
           distribution: 'temurin'
           java-version: '17'
+
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
+
       - name: Install Libraries
-        run: | 
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-tools
-          haxelib install hxcpp
-          haxelib install hxcpp-debug-server
-          haxelib install SScript
-          haxelib install hxCodec
-          haxelib install tjson
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+        run: |
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
+
       - name: Configure Android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
           haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
           haxelib run lime config JAVA_HOME $JAVA_HOME
-          haxelib run lime config ANDROID_SETUP true 
+          haxelib run lime config ANDROID_SETUP true
+
       - name: Compile
-        run: haxelib run lime build android
+        run: haxelib run lime build android -D officialBuild -final
+
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@main
         with:
           name: androidBuild
           path: export/release/android/bin/app/build/outputs/apk/release/*.apk
@@ -216,43 +150,105 @@ jobs:
     runs-on: macos-13
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
+
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
+
       - name: Install Libraries
         run: |
-          haxelib setup ~/haxelib 
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-tools
-          haxelib install hxcpp
-          haxelib install hxcpp-debug-server
-          haxelib install SScript
-          haxelib install hxCodec
-          haxelib install tjson
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc
-          haxelib git flxanimate https://github.com/ShadowMario/flxanimate dev
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-          haxelib git extension-androidtools https://github.com/MobilePorting/extension-androidtools-Base
-          haxelib install hxcpp > /dev/null --quiet
-          haxe -cp ./setup -D analyzer-optimize -main Main --interp
+          haxelib setup ~/haxelib
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
+
       - name: Compile
-        run: haxelib run lime build ios -nosign
+        run: haxelib run lime build ios -nosign -D officialBuild -final
+
       - name: Make Ipa
         run: |
-          cd export/release/ios/build/*-iphoneos
+          cd export/release/ios/build/Release-iphoneos
           mkdir Payload
           mv *.app Payload
           zip -r PsychEngine.ipa Payload
+
+      - name: Make Zip For Release
+        run: |
+           cd export/release/ios/build/Release-iphoneos
+           zip PsychEngine-iOS.zip PsychEngine.ipa
+
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@main
         with:
           name: iOSBuild
-          path: export/release/ios/build/Release-iphoneos/*.ipa
-          if-no-files-found: error
+          path: export/release/ios/build/Release-iphoneos/*.zip
+          if-no-files-found: errors
+  Releaser:
+    needs: [buildLinux, buildWindows, buildMac, buildAndroid, buildiOS]
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Download Android Build
+        uses: actions/download-artifact@v2
+        with:
+           name: androidBuild
+           path: /home/runner
+
+      - name: Move Android File
+        run: mv /home/runner/export/release/android/bin/app/build/outputs/apk/release/*.apk /home/runner/PsychEngine-Android.apk
+
+      - name: Download iOS Build
+        uses: actions/download-artifact@v2
+        with:
+           name: iOSBuild
+           path: /home/runner
+
+      - name: Move iOS File
+        run: mv /home/runner/export/release/ios/build/Release-iphoneos/*.zip /home/runner/PsychEngine-iOS.zip
+
+      - name: Download Linux Build
+        uses: actions/download-artifact@v2
+        with:
+           name: linuxBuild
+           path: /home/runner
+
+      - name: Move Linux File
+        run: mv /home/runner/export/release/linux/bin/* /home/runner/PsychEngine-Linux/
+
+      - name: Download Windows Build
+        uses: actions/download-artifact@v2
+        with:
+           name: windowsBuild
+           path: /home/runner
+
+      - name: Move Windows Files
+        run: mv /home/runner/export/release/windows/bin/* /home/runner/PsychEngine-Windows/
+
+      - name: Zip Windows Build
+        run: |
+          cd /home/runner
+          zip -r PsychEngine-Windows.zip PsychEngine-Windows
+
+      - name: Download Mac Build
+        uses: actions/download-artifact@v2
+        with:
+           name: macBuild
+           path: /home/runner
+
+      - name: Move Mac File
+        run: mv /home/runner/export/release/macos/bin/* /home/runner/PsychEngine-Mac/
+
+      - name: Publish The Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: "dev-5112f18"
+          title: "DevBuild 5112f18"
+          files: |
+            /home/runner/PsychEngine-Android.apk
+            /home/runner/PsychEngine-iOS.zip
+            /home/runner/PsychEngine-Linux/*
+            /home/runner/PsychEngine-Windows.zip
+            /home/runner/PsychEngine-Mac/*
