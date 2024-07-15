@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Build
+name: Build + Release
 
 
 # Controls when the action will run.
@@ -35,6 +35,9 @@ jobs:
           sudo apt-get install libvlc-dev
           sudo apt-get install libvlccore-dev
           haxelib setup ~/haxelib
+          haxelib install hmm
+          haxelib run hmm setup
+          hmm install
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Skip SScript setup mode
@@ -64,6 +67,9 @@ jobs:
       - name: Install Haxelib
         run: |
           haxelib setup C:/haxelib
+          haxelib install hmm
+          haxelib run hmm setup
+          hmm install
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
         shell: cmd
@@ -93,6 +99,9 @@ jobs:
       - name: Install Haxelib
         run: |
           haxelib setup ~/haxelib
+          haxelib install hmm
+          haxelib run hmm setup
+          hmm install
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
       - name: Skip SScript setup mode
@@ -126,8 +135,12 @@ jobs:
 
       - name: Install Libraries
         run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          haxelib setup C:/haxelib
+          haxelib install hmm
+          haxelib run hmm setup
+          hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
 
       - name: Configure Android
         run: |
@@ -160,8 +173,11 @@ jobs:
       - name: Install Libraries
         run: |
           haxelib setup ~/haxelib
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          haxelib install hmm
+          haxelib run hmm setup
+          hmm install
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./setup -D analyzer-optimize -main Main --interp
 
       - name: Compile
         run: haxelib run lime build ios -nosign -D officialBuild -final
